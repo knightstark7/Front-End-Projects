@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+  --primary-color: #ec1f55;
+  --text-color: #333;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: inherit;
+}
+
+body {
+  background-color: #f5f5f5;
+}
+
+html {
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+.player {
+  position: relative;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.player .icon-pause {
+  display: none;
+}
+
+.player.playing .icon-pause {
+  display: inline-block;
+}
+
+.player.playing .icon-play {
+  display: none;
+}
+
+.dashboard {
+  padding: 16px 16px 14px;
+  background-color: #fff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  max-width: 480px;
+  border-bottom: 1px solid #ebebeb;
+}
+
+/* HEADER */
+header {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+header h4 {
+  color: var(--primary-color);
+  font-size: 12px;
+}
+
+header h2 {
+  color: var(--text-color);
+  font-size: 20px;
+}
+
+/* CD */
+.cd {
+  display: flex;
+  margin: auto;
+  width: 200px;
+}
+
+.cd-thumb {
+  width: 100%;
+  padding-top: 100%;
+  border-radius: 50%;
+  background-color: #333;
+  background-size: cover;
+  margin: auto;
+}
+
+/* CONTROL */
+.control {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 18px 0 8px 0;
+}
+
+.control .btn {
+  color: #666;
+  padding: 18px;
+  font-size: 18px;
+}
+
+.control .btn.active {
+  color: var(--primary-color);
+}
+
+.control .btn-toggle-play {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 24px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color);
+}
+
+.progress {
+  width: 100%;
+  -webkit-appearance: none;
+  height: 6px;
+  background: #d3d3d3;
+  outline: none;
+  opacity: 0.7;
+  -webkit-transition: 0.2s;
+  transition: opacity 0.2s;
+}
+
+.progress::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 6px;
+  background-color: var(--primary-color);
+  cursor: pointer;
+}
+
+/* PLAYLIST */
+.playlist {
+  margin-top: 408px;
+  padding: 12px;
+}
+
+.song {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  background-color: #fff;
+  padding: 8px 16px;
+  border-radius: 5px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
+.song.active {
+  background-color: var(--primary-color);
+}
+
+.song:active {
+  opacity: 0.8;
+}
+
+.song.active .option,
+.song.active .author,
+.song.active .title {
+  color: #fff;
+}
+
+.song .thumb {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-size: cover;
+  margin: 0 8px;
+}
+
+.song .body {
+  flex: 1;
+  padding: 0 16px;
+}
+
+.song .title {
+  font-size: 18px;
+  color: var(--text-color);
+}
+
+.song .author {
+  font-size: 12px;
+  color: #999;
+}
+
+.song .option {
+  padding: 16px 8px;
+  color: #999;
+  font-size: 18px;
+}
+
+</style>
+</head>
+<body>
+    <div class="player">
+        <!-- Dashboard -->
+        <div class="dashboard">
+          <!-- Header -->
+          <header>
+            <h4>Now playing:</h4>
+            <h2>String 57th & 9th</h2>
+          </header>
+      
+          <!-- CD -->
+          <div class="cd">
+            <div class="cd-thumb" style="background-image: url('https://i.ytimg.com/vi/jTLhQf5KJSc/maxresdefault.jpg')">
+            </div>
+          </div>
+      
+          <!-- Control -->
+          <div class="control">
+            <div class="btn btn-repeat">
+              <i class="fas fa-redo"></i>
+            </div>
+            <div class="btn btn-prev">
+              <i class="fas fa-step-backward"></i>
+            </div>
+            <div class="btn btn-toggle-play">
+              <i class="fas fa-pause icon-pause"></i>
+              <i class="fas fa-play icon-play"></i>
+            </div>
+            <div class="btn btn-next">
+              <i class="fas fa-step-forward"></i>
+            </div>
+            <div class="btn btn-random">
+              <i class="fas fa-random"></i>
+            </div>
+          </div>
+      
+          <input id="progress" class="progress" type="range" value="0" step="1" min="0" max="100">
+      
+          <audio id="audio" src=""></audio>
+        </div>
+      
+        <!-- Playlist -->
+        <div class="playlist">
+          
+            
+        </div>
+    </div>
+      
+      <!-- Design from: https://static.collectui.com/shots/3671744/musicloud-revolutionary-app-for-music-streaming-large -->
+
+    <script>
+        /**
+        1. Render songs 
+        2. Scroll top
+        3. Play / pause / seek 
+        4. CD rotate
+        5. Next / prev
+        6. random
+        7. Next / repeat when ended
+        8. Active song 
+        9. Scroll active song into view
+        10. Play song when click
+        */
+
+       const $ = document.querySelector.bind(document)
+       const $$ = document.querySelectorAll.bind(document)
+
+       const PLAYER_STORAGE_KEY = 'F8_PLAYER'
+       
+        const player = $('.player')
+        const cd = $('.cd')
+        const heading = $('header h2')
+        const cdThumb = $('.cd-thumb')
+        const audio = $('#audio')
+        const playBtn = $('.btn-toggle-play')
+        const progress = $('#progress')
+        const prevBtn = $('.btn-prev')
+        const nextBtn = $('.btn-next')
+        const randomBtn = $('.btn-random')
+        const repeatBtn = $('.btn-repeat')
+        const playlist = $('.playlist')
+
+        const app = {
+            currentIndex: 0,
+            isPlaying: false,
+            isRandom: false,
+            isRepeat: false,
+            config: JSON.parse(localStorage.getItem(PLAYER_STORAGE_KEY)) || {},
+            songs: [
+                {
+                name: "Gone Gone Gone",
+                singer: "Phillip Phillips",
+                path: "https://legitmuzic.com/wp-content/uploads/2021/11/Phillip_Phillips_-_Gone_Gone_Gone_legitmuzic.com.mp3",
+                image: "data:image/jpeg;base64,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"
+                },
+                {
+                name: "Tu Phir Se Aana",
+                singer: "Raftaar x Salim Merchant x Karma",
+                path: "https://mp3.vlcmusic.com/download.php?track_id=34213&format=320",
+                image:
+                    "https://1.bp.blogspot.com/-kX21dGUuTdM/X85ij1SBeEI/AAAAAAAAKK4/feboCtDKkls19cZw3glZWRdJ6J8alCm-gCNcBGAsYHQ/s16000/Tu%2BAana%2BPhir%2BSe%2BRap%2BSong%2BLyrics%2BBy%2BRaftaar.jpg"
+                },
+                {
+                name: "Naachne Ka Shaunq",
+                singer: "Raftaar x Brobha V",
+                path:
+                    "https://mp3.filmysongs.in/download.php?id=Naachne Ka Shaunq Raftaar Ft Brodha V Mp3 Hindi Song Filmysongs.co.mp3",
+                image: "https://i.ytimg.com/vi/QvswgfLDuPg/maxresdefault.jpg"
+                },
+                {
+                name: "Mantoiyat",
+                singer: "Raftaar x Nawazuddin Siddiqui",
+                path: "https://mp3.vlcmusic.com/download.php?track_id=14448&format=320",
+                image:
+                    "https://a10.gaanacdn.com/images/song/39/24225939/crop_480x480_1536749130.jpg"
+                },
+                {
+                name: "Aage Chal",
+                singer: "Raftaar",
+                path: "https://mp3.vlcmusic.com/download.php?track_id=25791&format=320",
+                image:
+                    "https://a10.gaanacdn.com/images/albums/72/3019572/crop_480x480_3019572.jpg"
+                },
+                {
+                name: "Damn",
+                singer: "Raftaar x kr$na",
+                path:
+                    "https://mp3.filmisongs.com/go.php?id=Damn%20Song%20Raftaar%20Ft%20KrSNa.mp3",
+                image:
+                    "https://i.scdn.co/image/ab67616d0000b273441105b2aed66a31a869299f"
+                },
+                {
+                name: "Feeling You",
+                singer: "Raftaar x Harjas",
+                path: "https://mp3.vlcmusic.com/download.php?track_id=27145&format=320",
+                image:
+                    "https://a10.gaanacdn.com/gn_img/albums/YoEWlabzXB/oEWlj5gYKz/size_xxl_1586752323.webp"
+                }
+            ], 
+            setConfig: function(key, value) {
+              this.config[key] = value
+              localStorage.setItem(PLAYER_STORAGE_KEY, JSON.stringify(this.config))
+            },
+            render: function() {
+                const htmls = this.songs.map((song, index) => {
+                    return `
+                        <div class="song ${index === this.currentIndex ? 'active' : ''}" data-index="${index}">
+                            <div class="thumb" style="background-image: url('${song.image}')">
+                            </div>
+                            <div class="body">
+                                <h3 class="title">${song.name}</h3>
+                                <p class="author">${song.singer}</p>
+                            </div>
+                            <div class="option">
+                                <i class="fas fa-ellipsis-h"></i>
+                            </div>
+                        </div>
+                    `
+                })
+                playlist.innerHTML = htmls.join('')
+            },
+            defineProperties: function() {
+              Object.defineProperty(this, 'currentSong', {
+                get: function() {
+                  return this.songs[this.currentIndex]
+                }
+              })
+            },
+            handleEvents: function() {
+              const _this = this
+              const cdWidth = cd.offsetWidth
+
+              //Xử lí CD quay / dừng
+              const cdThumbAnimate = cdThumb.animate([
+                {transform: 'rotate(360deg)'}
+              ], {
+                duration: 10000, //10 seconds
+                iterations: Infinity, 
+              })
+              cdThumbAnimate.pause()
+
+              // Xử lí phóng to / thu nhỏ CD
+              document.onscroll = function() {
+                const scrollTop = window.scrollY || document.documentElement.scrollTop
+                const newCdWidth = cdWidth - scrollTop
+
+                cd.style.width = newCdWidth > 0 ? newCdWidth + 'px' : 0
+                cd.style.opacity = newCdWidth / cdWidth
+              }
+
+              //Xử lí khi click play
+              playBtn.onclick = function() {
+                if(_this.isPlaying) {
+                  audio.pause()
+
+                } else {
+                  audio.play()
+                }
+              }
+              //Khi song được play
+              audio.onplay = function() {
+                _this.isPlaying = true
+                player.classList.add('playing')
+                cdThumbAnimate.play()
+              }
+
+              //Khi song bị pause
+              audio.onpause = function() {
+                _this.isPlaying = false
+                player.classList.remove('playing')
+                cdThumbAnimate.pause()
+              }
+
+              // Khi tiến độ bài hát thay đổi 
+              audio.ontimeupdate = function() {
+                if(audio.duration) {
+                  const progressPercent = Math.floor(audio.currentTime / audio.duration * 100)
+                  progress.value = progressPercent
+                }
+              }
+
+              //Xử lí khi tua song
+              progress.onchange = function(e) {
+                const seekTime = audio.duration / 100 * e.target.value 
+                audio.currentTime = seekTime
+
+              }
+
+              //Khi next song 
+              nextBtn.onclick = function() {
+                if(_this.isRandom) {
+                  _this.playRandomSong()
+                } else {
+                  _this.nextSong()
+                }
+                audio.play()
+                _this.render()
+                _this.scrollToActiveSong()
+              }
+
+              //Khi prev song 
+              prevBtn.onclick = function() {
+                if(_this.isRandom) {
+                  _this.playRandomSong()
+                } else {
+                  _this.prevSong()
+                }
+                audio.play()
+                _this.render()
+                _this.scrollToActiveSong()
+
+              }
+
+              //Xử lí bật / tắt random
+              randomBtn.onclick = function() {
+                _this.isRandom = !_this.isRandom
+                _this.setConfig('isRandom', _this.isRandom)
+                randomBtn.classList.toggle('active', _this.isRandom)
+              }
+
+              //Xử lí lặp lại một song
+              repeatBtn.onclick = function(e) {
+                _this.isRepeat = !_this.isRepeat
+                _this.setConfig('isRepeat', _this.isRepeat)
+                repeatBtn.classList.toggle('active', _this.isRepeat)
+              }
+
+              //Xử lí next song khi audio ended
+              audio.onended = function() {
+                if(_this.isRepeat) {
+                  audio.play()
+                } else {
+                  nextBtn.click()
+                }
+              }
+
+              // Lắng nghe hành vi click vào playlist
+              playlist.onclick = function(e) {
+                const songNode = e.target.closest('.song:not(.active)')
+                if(songNode || e.target.closest('.option')) {
+                  //Xử lí khi click vào song
+                  if(songNode) {
+                    _this.currentIndex = Number(songNode.dataset.index)
+                    _this.loadCurrentSong()
+                    _this.render()
+                    audio.play()
+                  }
+
+                  //Xử lí khi click song option
+                  if(e.target.closest('.option')) {
+
+                  }
+                }
+              }
+            },
+            scrollToActiveSong: function() {
+              setTimeout(() => {
+                $('.song.active').scrollIntoView({
+                  behavior: 'smooth',
+                  block: 'nearest',
+                })
+              }, 300)
+            },
+
+            loadCurrentSong: function() {
+
+              heading.textContent = this.currentSong.name
+              cdThumb.style.backgroundImage = `url('${this.currentSong.image}')`
+              audio.src = this.currentSong.path
+
+            },
+            loadConfig: function() {
+              this.isRandom = this.config.isRandom
+              this.isRepeat = this.config.isRepeat
+            },
+            nextSong: function() {
+              this.currentIndex++
+              if(this.currentIndex >= this.songs.length) {
+                this.currentIndex = 0
+              }
+              this.loadCurrentSong() 
+            },
+            prevSong: function() {
+              this.currentIndex--
+              if(this.currentIndex < 0) {
+                this.currentIndex = this.songs.length - 1
+              }
+              this.loadCurrentSong() 
+            },
+            playRandomSong: function() {
+              let newIndex
+              do {
+                newIndex = Math.floor(Math.random() * this.songs.length)
+              } while (newIndex === this.currentIndex)
+
+              this.currentIndex = newIndex
+              this.loadCurrentSong() 
+            },
+            start: function() {
+                //Gán cấu hình từ config vào ứng dụng
+                this.loadConfig()
+                //Định nghĩa các thuộc tính cho object
+                this.defineProperties()
+                
+                //Lắng nghe / xử lí các sự kiện (DOM events)
+                this.handleEvents()
+
+                //Tải thông tin bài hát đầu tiên vào UI khi chạy ứng dụng
+                this.loadCurrentSong()
+
+                //Render playlist
+                this.render()
+
+                //Hiển thị trạng thái ban đầu của button repeat & random
+                randomBtn.classList.toggle('active', this.isRandom)
+                repeatBtn.classList.toggle('active', this.isRepeat)
+            } 
+        }
+
+        app.start()
+    </script>
+</body>
+</html>
+
+
+
